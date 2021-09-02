@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<style>
+			.dialog-no-close .ui-dialog-titlebar {
+			  display: none;
+			}
+				
+			#parent {
+			text-align:center;
+			}
+			.block {
+			  
+				text-align:left;
+			}
+			.center {
+				margin:auto;
+			}
+			.left {
+				margin:auto auto auto 0;
+			}
+			.right {
+				margin:auto 0 auto auto;
+			}
+	</style>
+    <!-- Required meta tags -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- load MUI -->
+    <link href="//cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdn.muicss.com/mui-0.10.3/js/mui.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <script src="https://preview.threekit.com/app/js/threekit-player.js"></script>
+
+    <title>Canvas Prints</title>
+</head>
+
+<body> 
+    <section>
+        <div class="full" id="parent">
+                        <div class="center-desk">
+                           <div class="logo"> <a href="index.html"><img src="images/logo.png" alt="#"></a> </div>
+                        </div>
+                     </div>
+        <div id="playerContainer" style="height:400px; width:100%"  class="preview"></div>
+		<div style="width:55%; margin-left:22%" class="mui-panel" id="parent">
+				  <button class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="zoominoutimage('Plus')"><i class="fa fa-plus"></i></button>
+				  <button class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="zoominoutimage('Minus')"><i class="fa fa-minus"></i></button>
+				  <button class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="rotateimage();"><i class="fa fa-repeat"></i></button>
+				  <button class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="movefourdirection('Right');"><i class="fa fa-arrow-right"></i></button>
+				  <button class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="movefourdirection('Left');"><i class="fa fa-arrow-left"></i></button>
+				  <button class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="movefourdirection('Down');"><i class="fa fa-arrow-down"></i></button>
+				  <button class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="movefourdirection('Up');"><i class="fa fa-arrow-up"></i></button>
+                <!-- <button type="button" class="btn btn-primary b1" onclick="myFunction()">Rotate Canvas</button>--->
+                <button type="button" class="mui-btn mui-btn--flat mui-btn--accent" id="button_to_enable" onclick="blacknwhiteimage()" ;>Black And White</button>
+            </div>
+			<div style="width:55%; margin-left:22%" class="mui-panel" id="parent">
+			<input id="fileupload" type="file" name="fileupload"/>
+            <button class="mui-btn mui-btn--accent id="upload-button"" onclick="uploadlocal();"> Upload </button>
+			<div id="results"></div>
+			<div id="uiOverlay" style="display: none;">Please wait</div>
+		    </div>
+			<div style="width:55%; margin-left:22%" class="mui-panel" id="parent">
+			<button class="mui-btn mui-btn--accent" onclick="setBorder('Black')">Black</button>
+			<button class="mui-btn mui-btn--accent" onclick="setBorder('Grey')">Grey</button>
+			<button class="mui-btn mui-btn--accent" onclick="setBorder('Mirror')">Mirror</button>
+			<button class="mui-btn mui-btn--accent" onclick="setBorder('Blur')">Blur</button>
+			<button class="mui-btn mui-btn--accent" onclick="setBorder('White')">White</button>
+			<br>
+			<button class="mui-btn mui-btn--accent" onclick="addtocart();">Add To Cart</button> 
+		</div>
+    </section>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        const authToken = 'e2be7601-d925-4ee0-a270-be355652264d'; //Canvas Prints Sandbox localhost
+        const assetId = 'df74c95c-a402-42bf-aeb2-93865913de8f';
+        const orgID = '00c181f6-4e03-411a-87fa-18a10b9f3ddb'; //Canvas Prints Sandbox
+        var selectNodeID = '';
+        var selectNodeName = '';
+        var playerObj;
+        var configuratorobj;
+        var finalObj = {};//This would store all the configurations of the images of the canvas. This needs to be passed to imagemagic.       
+		const urlParams = new URLSearchParams(location.search);
+		window.threekitPlayer({
+                authToken,
+                el: document.getElementById('playerContainer'),
+                assetId,
+                intialConfiguration: {
+				//'panelName': {
+				//assetId: 'b565ec2e-edcf-4e99-9f46-a0ff18f51776'
+				},
+				showLoadingThumbnail : true,
+                showConfigurator: false,
+                locale: "EN",
+				allowMobileVerticalOrbit: true,
+            })
+            .then(async api => {
+                window.api = api;
+                window.configurator = await api.getConfigurator();
+				var panelAssetid= getAssetIDforVariant(urlParams.get("variant"));
+				configurator.setConfiguration({"panelName" : {assetId :panelAssetid}})
+                playerObj = api.enableApi('player')
+                addToolToScene();
+            }); //end of async api
+
+		async function  uploadlocal(){
+		var a=await uploadImage(fileupload.files[0]);
+		changeImage(a.imageassetId);
+		function enableButton() {
+            document.getElementById("button_to_enable").disabled = false;
+        }
+		}
+    </script>
+    <script src="uploadFiles.js"></script>
+	<script src="js/threetriptychcode.js"></script>
+</body>
+
+</html>
