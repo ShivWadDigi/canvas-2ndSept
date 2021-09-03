@@ -14,13 +14,33 @@ function addtocart(){
         var hpos = fobj.Canvas_1.horizontalPos;
         var vpos = fobj.Canvas_1.verticalPos;
 
+        const img_url = 'https://preview.threekit.com/api/files/'+img_id+'/content'
+
+        // const img = fetch(img_url).then((d)=>{
+        //     console.log(d);
+        // }).catch((err)=>{
+        //     console.log(err)
+        // }); 
         
-        const img = fetch('https://preview.threekit.com/api/files/'+img_id+'/content').then((d)=>{
-            return d;
-        }).catch((err)=>{
-            console.log(err)
-        }); 
-        console.log(img);   
+        // img.then((d)=>{
+        //     console.log(d);
+        // })
+        
+        // Using fetch
+    async function downloadImage(img_url, img_id) {
+        const image = await fetch(img_url)
+        const imageBlog = await image.blob()
+        const imageURL = URL.createObjectURL(imageBlog)
+    
+        const link = document.createElement('a')
+        link.href = imageURL
+        link.download = 'js/Downloads'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
+  downloadImage(img_url, img_id)
 }
 function setBorder(colorVal)
 {
